@@ -1,78 +1,39 @@
-const initialState = {
-  items: [],
-  item: {
-    owner: '',
-    model: '',
-    description: '',
-  },
-  editMode: false,
+import { combineReducers } from 'redux';
+
+// Initial state for the bicycle
+const initialBicycleState = {
+  items: [], // List of all repairs
+  item: null, // Current value in the text-boxes for updates
+  editMode: false, // To know if any list item is being updated
 };
 
-const bicycleReducer = (state = initialState, action) => {
+// Reducer function for bicycle
+const bicycleReducer = (state = initialBicycleState, action) => {
   switch (action.type) {
+    // Handle different action types here
     case 'repairAdded':
-      if (!action.payload.owner || !action.payload.model || !action.payload.description) {
-        return state;
-      }
-      return {
-        ...state,
-        items: [...state.items, action.payload],
-        item: {
-          owner: '',
-          model: '',
-          description: '',
-        },
-      };
-
+      // Add a new repair to the list
+      // Return updated state
     case 'repairRemoved':
-      return {
-        ...state,
-        items: state.items.filter((item) => item.id !== action.payload.id),
-      };
-
+      // Remove a repair from the list
+      // Return updated state
     case 'repairResolved':
-      return {
-        ...state,
-        items: state.items.map((item) =>
-          item.id === action.payload.id ? { ...item, resolved: !item.resolved } : item
-        ),
-      };
-
+      // Mark a repair as resolved or unresolved
+      // Return updated state
     case 'repairUpdated':
-      return {
-        ...state,
-        items: state.items.map((item) =>
-          item.id === action.payload.id
-            ? {
-                ...item,
-                owner: action.payload.owner,
-                model: action.payload.model,
-                description: action.payload.description,
-              }
-            : item
-        ),
-        item: {
-          owner: '',
-          model: '',
-          description: '',
-        },
-        editMode: false,
-      };
-
+      // Update details of a repair
+      // Return updated state
     case 'editTask':
-      return {
-        ...state,
-        item: {
-          owner: action.payload.owner,
-          model: action.payload.model,
-          description: action.payload.description,
-        },
-        editMode: true,
-      };
-
+      // Set the edit mode and item for a repair being updated
+      // Return updated state
     default:
       return state;
   }
 };
 
-export default bicycleReducer;
+// Combine all reducers if you have more than one reducer in your app
+const rootReducer = combineReducers({
+  bicycle: bicycleReducer,
+});
+
+export default rootReducer;
