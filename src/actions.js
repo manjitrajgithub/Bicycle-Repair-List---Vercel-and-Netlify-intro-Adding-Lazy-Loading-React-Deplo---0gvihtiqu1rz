@@ -13,35 +13,52 @@ export const repairAdded = (var1,va2) => {
 }
 
 */
-let nextId = 1;
+// action.js
 
-export const repairAdded = (owner, model, description) => ({
+// Action to add a new repair
+export const addRepair = (owner, model, description) => ({
   type: 'repairAdded',
   payload: {
-    id: nextId++,
     owner,
     model,
     description,
-    resolved: false,
   },
 });
 
-export const repairRemoved = (id) => ({
+// Action to remove a repair
+export const removeRepair = (id) => ({
   type: 'repairRemoved',
-  payload: { id },
+  payload: {
+    id,
+  },
 });
 
-export const repairResolved = (id) => ({
+// Action to resolve/unresolve a repair
+export const resolveRepair = (id) => ({
   type: 'repairResolved',
-  payload: { id },
+  payload: {
+    id,
+  },
 });
 
-export const repairUpdated = (id, owner, model, description) => ({
+// Action to update a repair
+export const updateRepair = (id, owner, model, description) => ({
   type: 'repairUpdated',
-  payload: { id, owner, model, description },
+  payload: {
+    id,
+    owner,
+    model,
+    description,
+  },
 });
 
+// Action to handle the edit mode
 export const editTask = (id, owner, model, description) => ({
   type: 'editTask',
-  payload: { id, owner, model, description },
+  payload: {
+    id,
+    owner,
+    model,
+    description,
+  },
 });
