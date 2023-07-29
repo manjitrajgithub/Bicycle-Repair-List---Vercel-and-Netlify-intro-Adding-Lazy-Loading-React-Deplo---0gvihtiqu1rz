@@ -1,78 +1,90 @@
-import { combineReducers } from 'redux';
+/*
+reducer is defined here and is exproted.
+This reducer should handle all the actions.
+Example of how to use reducer is as follows:
 
-// Initial state for the bicycle
-const initialBicycleState = {
-  items: [], // List of all repairs
-  item: null, // Current value in the text-boxes for updates
-  editMode: false, // To know if any list item is being updated
+const reducer = (state = [],action = {}) => {
+
+  switch(action.type){
+
+    case 'actionType1': 
+      return changedState1;
+    
+    case 'actionType2':
+      return changedState2;
+
+    default: 
+      return state;
+    }
+  
+export default reducer;
+*/
+import { v4 as uuidv4 } from "uuid";
+import { combineReducers } from "redux";
+
+const initalState = {
+  items: [],
+  item: { owner: "", model: "", description: "", resolved: false },
+  editMode: false,
 };
 
-// Reducer function for bicycle
-const bicycleReducer = (state = initialBicycleState, action) => {
+function listReducer(state = initalState, action) {
   switch (action.type) {
-    // Handle different action types here
-    case 'repairAdded':
-      // Add a new repair to the list
-      // Return updated state
-      ...state,
-        items: [...state.items, action.payload],
-        item: {
-          owner: '',
-          model: '',
-          description: ''
-        }
-      };
-    case 'repairRemoved':
-      // Remove a repair from the list
-      // Return updated state
-  return {
+    case "repairAdded":
+      action.payload.id = uuidv4();
+      action.payload.resolved = false;
+      return {
         ...state,
-        items: state.items.filter((item) => item.id !== action.payload.id)
-      };
-    case 'repairResolved':
-      // Mark a repair as resolved or unresolved
-      // Return updated state
-  return {
-        ...state,
-        items: state.items.map((item) =>
-          item.id === action.payload.id
-            ? { ...item, resolved: !item.resolved }
-            : item
-        )
-      };
-    case 'repairUpdated':
-      // Update details of a repair
-      // Return updated state
-  return {
-        ...state,
-        items: state.items.map((item) =>
-          item.id === action.payload.id ? action.payload : item
-        ),
+        items: state.items.concat([action.payload]),
+        item: { owner: "", model: "", description: "" },
         editMode: false,
-        item: {
-          owner: '',
-          model: '',
-          description: ''
-        }
       };
-    case 'editTask':
-      // Set the edit mode and item for a repair being updated
-      // Return updated state
-  return {
+
+    case "repairRemoved":
+      return {
         ...state,
+        items: state.items.filter((item) => item.id !== action.payload.id),
+        item: { owner: "", model: "", description: "" },
+        editMode: false,
+      };
+    case "repairResolved":
+      return {
+        ...state,
+        items: state.items.map((item) => {
+          if (item.id == action.payload.id) {
+            item.resolved = !item.resolved;
+          }
+          return item;
+        }),
+        item: { owner: "", model: "", description: "" },
+      };
+    case "editTask":
+      return {
+        ...state,
+        item: action.payload,
         editMode: true,
-        item: {
-          ...action.payload
-        }
+      };
+    case "repairUpdate":
+      return {
+        ...state,
+        items: state.items.map((item) => {
+          if (item.id == action.payload.id) {
+            item.owner = action.payload.owner;
+            item.model = action.payload.model;
+            item.description = action.payload.description;
+          }
+          return item;
+        }),
+        item: { owner: "", model: "", description: "" },
+        editMode: false,
       };
     default:
       return state;
   }
-};
+}
 
-// Combine all reducers if you have more than one reducer in your app
-const rootReducer = combineReducers({
-  bicycle: bicycleReducer,
+const reducers = combineReducers({
+  bicycle: listReducer,
 });
 
-export default rootReducer;
+export default reducers;
