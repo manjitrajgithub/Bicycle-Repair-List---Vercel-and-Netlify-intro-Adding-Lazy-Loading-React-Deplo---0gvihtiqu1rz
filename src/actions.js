@@ -13,62 +13,52 @@ export const repairAdded = (var1,va2) => {
 }
 
 */
-// action.js
-
-let nextRepairId = 1; // This variable will help in generating unique IDs for repairs
-
 export const repairAdded = ({ owner, model, description }) => {
   return {
-    type: 'repairAdded',
+    type: "repairAdded",
     payload: {
-      id: nextRepairId++,
       owner,
       model,
       description,
-      resolved: false
-    }
+    },
   };
 };
 
 export const repairRemoved = (id) => {
   return {
-    type: 'repairRemoved',
+    type: "repairRemoved",
     payload: {
-      id
-    }
+      id,
+    },
   };
 };
-
 export const repairResolved = (id) => {
   return {
-    type: 'repairResolved',
+    type: "repairResolved",
     payload: {
-      id
-    }
+      id,
+    },
   };
 };
-
-export const repairUpdated = ({ id, owner, model, description }) => {
+export const repairUpdate = ({ id, owner, model, description }) => {
   return {
-    type: 'repairUpdated',
+    type: "repairUpdate",
     payload: {
       id,
       owner,
       model,
-      description
-    }
+      description,
+    },
   };
 };
-
 export const editTask = ({ id, owner, model, description }) => {
   return {
-    type: 'editTask',
+    type: "editTask",
     payload: {
       id,
       owner,
       model,
-      description
-    }
+      description,
+    },
   };
 };
-
