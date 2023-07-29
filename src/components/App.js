@@ -5,85 +5,85 @@ import {
   repairRemoved,
   repairResolved,
   repairUpdated,
-  editTask,
-} from './action';
+  editTask
+} from './actions';
 
 const App = () => {
   const dispatch = useDispatch();
-  const { items, item, editMode } = useSelector((state) => state);
+  const bicycle = useSelector((state) => state.bicycle);
 
-  const handleAddRepair = () => {
-    const { owner, model, description } = item;
-    dispatch(repairAdded(owner, model, description));
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { owner, model, description } = bicycle.item;
+
+    if (!owner || !model || !description) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    if (bicycle.editMode) {
+      dispatch(repairUpdated(bicycle.item));
+    } else {
+      dispatch(repairAdded(bicycle.item));
+    }
   };
 
-  const handleRemoveRepair = (id) => {
+  const handleEdit = (id) => {
+    const itemToEdit = bicycle.items.find((item) => item.id === id);
+    dispatch(editTask(itemToEdit));
+  };
+
+  const handleDelete = (id) => {
     dispatch(repairRemoved(id));
   };
 
-  const handleResolveRepair = (id) => {
+  const handleResolve = (id) => {
     dispatch(repairResolved(id));
-  };
-
-  const handleUpdateRepair = () => {
-    const { id, owner, model, description } = item;
-    dispatch(repairUpdated(id, owner, model, description));
-  };
-
-  const handleEditTask = (id, owner, model, description) => {
-    dispatch(editTask(id, owner, model, description));
   };
 
   return (
     <div>
       <h1>Bicycle Repair App</h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         <label htmlFor="owner-text-box">Owner:</label>
         <input
+          type="text"
           id="owner-text-box"
-          type="text"
-          value={item.owner}
-          onChange={(e) => handleEditTask(item.id, e.target.value, item.model, item.description)}
-        />
-
-        <label htmlFor="model-text-box">Model:</label>
-        <input
-          id="model-text-box"
-          type="text"
-          value={item.model}
-          onChange={(e) => handleEditTask(item.id, item.owner, e.target.value, item.description)}
-        />
-
-        <label htmlFor="description-text-box">Description:</label>
-        <input
-          id="description-text-box"
-          type="text"
-          value={item.description}
+          value={bicycle.item.owner}
           onChange={(e) =>
-            handleEditTask(item.id, item.owner, item.model, e.target.value)
+            dispatch({ type: 'editTask', payload: { ...bicycle.item, owner: e.target.value } })
           }
         />
-
-        <button type="button" onClick={editMode ? handleUpdateRepair : handleAddRepair}>
-          +
-        </button>
+        <label htmlFor="model-text-box">Model:</label>
+        <input
+          type="text"
+          id="model-text-box"
+          value={bicycle.item.model}
+          onChange={(e) =>
+            dispatch({ type: 'editTask', payload: { ...bicycle.item, model: e.target.value } })
+          }
+        />
+        <label htmlFor="description-text-box">Description:</label>
+        <input
+          type="text"
+          id="description-text-box"
+          value={bicycle.item.description}
+          onChange={(e) =>
+            dispatch({ type: 'editTask', payload: { ...bicycle.item, description: e.target.value } })
+          }
+        />
+        <button type="submit">+</button>
       </form>
-
       <ul>
-        {items.map((repair) => (
-          <li key={repair.id} className="repair-item">
-            <span>Owner: {repair.owner}</span>
-            <span>Model: {repair.model}</span>
-            <span>Description: {repair.description}</span>
-
-            <button type="button" onClick={() => handleEditTask(repair.id, repair.owner, repair.model, repair.description)}>
-              Update
-            </button>
-            <button type="button" onClick={() => handleRemoveRepair(repair.id)}>
-              Delete
-            </button>
-            <button type="button" onClick={() => handleResolveRepair(repair.id)}>
-              {repair.resolved ? 'Undo' : 'Done'}
+        {bicycle.items.map((item) => (
+          <li className="repair-item" key={item.id}>
+            <span>{item.owner}</span>
+            <span>{item.model}</span>
+            <span>{item.description}</span>
+            <button onClick={() => handleEdit(item.id)}>Update</button>
+            <button onClick={() => handleDelete(item.id)}>Delete</button>
+            <button onClick={() => handleResolve(item.id)}>
+              {item.resolved ? 'Undo' : 'Done'}
             </button>
           </li>
         ))}
